@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with GPT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        textarea {
+            width: 90%;
+            height: 100px;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #response {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat with GPT</h1>
+    <textarea id="user-input" placeholder="Type your message here..."></textarea>
+    <br>
+    <button onclick="sendToZapier()">Send</button>
+    <div id="response">Response will appear here...</div>
+
+    <script>
+        async function sendToZapier() {
+            const input = document.getElementById("user-input").value;
+            const responseDiv = document.getElementById("response");
+
+            responseDiv.textContent = "Processing...";
+
+            try {
+                const response = await fetch("YOUR_ZAPIER_WEBHOOK_URL", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ message: input })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                // OpenAI 응답 데이터를 표시
+                responseDiv.textContent = data.choices[0].message.content || "No response received.";
+            } catch (error) {
+                responseDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
